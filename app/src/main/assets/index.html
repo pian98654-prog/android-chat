@@ -6,34 +6,54 @@
 <title>Laravel Chat</title>
 <style>
 :root{--bg:#f4f5f7;--panel:#fff;--text:#1a1c20;--muted:#6b7280;--me:#2f6feb;--them:#e8eaee;--line:#e3e5e9}
-@media (prefers-color-scheme:dark){:root{--bg:#0f1115;--panel:#181b21;--text:#eceef2;--muted:#9aa1ad;--them:#262a33;--line:#2a2e37;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#0f1115;--panel:#181b21;--text:#eceef2;--muted:#9aa1ad;--them:#262a33;--line:#2a2e37;color-scheme:dark}
+@media (prefers-color-scheme:dark){:root:not([data-theme]){--bg:#0f1115;--panel:#181b21;--text:#eceef2;--muted:#9aa1ad;--them:#262a33;--line:#2a2e37;color-scheme:dark}}
 *{box-sizing:border-box}
 html,body,#root{height:100%;margin:0}
 body{background:var(--bg);color:var(--text);font:15px/1.45 system-ui,-apple-system,"Segoe UI",sans-serif}
-.app{display:flex;height:100%;max-width:980px;margin:0 auto;background:var(--panel);border-inline:1px solid var(--line)}
-.side{width:300px;border-right:1px solid var(--line);display:flex;flex-direction:column}
-.side h1{font-size:18px;margin:0;padding:16px}
-.room{display:flex;gap:12px;padding:12px 16px;cursor:pointer;border:0;background:none;color:inherit;text-align:left;width:100%}
-.room:hover,.room.on{background:var(--bg)}
-.av{width:40px;height:40px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:600;flex:none}
-.room small{display:block;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:190px}
-.main{flex:1;display:flex;flex-direction:column;min-width:0}
-.head{display:flex;align-items:center;gap:10px;padding:12px 16px;border-bottom:1px solid var(--line)}
-.head input{margin-left:auto;width:140px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:inherit}
-.back{display:none;background:none;border:0;color:var(--me);font-size:20px}
-.msgs{flex:1;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
-.b{max-width:75%;padding:8px 12px;border-radius:16px;background:var(--them);word-wrap:break-word}
+button,input,textarea{font:inherit}
+.app{display:flex;flex-direction:column;height:100%;max-width:720px;margin:0 auto;background:var(--panel);border-inline:1px solid var(--line)}
+.top{display:flex;align-items:center;gap:10px;padding:calc(14px + env(safe-area-inset-top)) 16px 12px;border-bottom:1px solid var(--line)}
+.top h1{margin:0;font-size:20px;flex:1}
+.top input{width:130px;padding:6px 10px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:inherit}
+.iconbtn{border:0;background:var(--me);color:#fff;width:36px;height:36px;border-radius:50%;font-size:22px;line-height:1}
+.back{background:none;border:0;color:var(--me);font-size:26px;padding:0 6px}
+.body{flex:1;min-height:0;overflow-y:auto;display:flex;flex-direction:column}
+.nav{display:flex;border-top:1px solid var(--line);background:var(--panel);padding-bottom:env(safe-area-inset-bottom)}
+.nav button{flex:1;background:none;border:0;color:var(--muted);padding:8px 0 6px;font-size:12px;display:flex;flex-direction:column;align-items:center;gap:2px}
+.nav button.on{color:var(--me);font-weight:600}
+.nav svg{width:24px;height:24px;fill:none;stroke:currentColor;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.av{width:44px;height:44px;border-radius:50%;display:grid;place-items:center;color:#fff;font-weight:600;flex:none}
+.room{display:flex;gap:12px;align-items:center;padding:12px 16px;border:0;background:none;color:inherit;text-align:left;width:100%}
+.room:active{background:var(--bg)}
+.room div{min-width:0}
+.room small{display:block;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.msgs{flex:1;min-height:0;overflow-y:auto;padding:16px;display:flex;flex-direction:column;gap:8px}
+.b{max-width:78%;padding:8px 12px;border-radius:16px;background:var(--them);word-wrap:break-word}
 .b.me{align-self:flex-end;background:var(--me);color:#fff}
 .b span{display:block;font-size:11px;opacity:.7;margin-top:2px}
-.form{display:flex;gap:8px;padding:12px 16px;border-top:1px solid var(--line)}
-.form input{flex:1;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:inherit;font-size:15px}
-.form button{border:0;border-radius:999px;padding:0 18px;background:var(--me);color:#fff;font-weight:600}
-.side h1{display:flex;align-items:center;justify-content:space-between}
-.gear{background:none;border:0;color:var(--muted);font-size:20px}
-.cfg{display:flex;gap:6px;padding:0 16px 8px}.cfg input{flex:1;min-width:0;padding:8px 10px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:inherit}.cfg button{border:0;border-radius:8px;background:var(--me);color:#fff;padding:0 12px}
-.err{margin:0 16px 8px;padding:8px 10px;border-radius:8px;background:#e0603a22;color:#e0603a;font-size:13px}
-.empty{margin:auto;color:var(--muted)}
-@media (max-width:700px){.side{width:100%}.app.chat .side{display:none}.app:not(.chat) .main{display:none}.back{display:block}}
+.form{display:flex;gap:8px;padding:10px 16px calc(10px + env(safe-area-inset-bottom));border-top:1px solid var(--line)}
+.form input,.field{flex:1;min-width:0;padding:10px 14px;border-radius:999px;border:1px solid var(--line);background:var(--bg);color:inherit}
+.form button,.btn{border:0;border-radius:999px;padding:10px 18px;background:var(--me);color:#fff;font-weight:600}
+.btn.ghost{background:var(--bg);color:var(--text);border:1px solid var(--line)}
+.btn.danger{background:#d64545}
+.empty{margin:auto;padding:24px;color:var(--muted);text-align:center}
+.note{margin:12px 16px 0;padding:8px 12px;border-radius:8px;background:var(--bg);color:var(--muted);font-size:13px}
+.sec{padding:16px;border-bottom:1px solid var(--line)}
+.sec h2{margin:0 0 10px;font-size:13px;font-weight:600;color:var(--muted);text-transform:uppercase;letter-spacing:.04em}
+.row{display:flex;gap:8px;align-items:center;margin-top:8px}
+.seg{display:flex;gap:6px;flex-wrap:wrap}
+.seg button{border:1px solid var(--line);background:var(--bg);color:var(--text);border-radius:999px;padding:8px 14px}
+.seg button.on{background:var(--me);border-color:var(--me);color:#fff}
+.me-row{display:flex;align-items:center;gap:12px;padding:16px;border-bottom:1px solid var(--line)}
+.card{margin:12px 16px 0;border-radius:14px;padding:18px;color:#fff;position:relative}
+.card p{margin:0 0 10px;font-size:18px;word-wrap:break-word}
+.card small{opacity:.85}
+.card .x{position:absolute;top:8px;right:10px;border:0;background:rgba(0,0,0,.25);color:#fff;width:26px;height:26px;border-radius:50%}
+.dots{display:flex;gap:10px;margin-top:10px}
+.dots button{width:30px;height:30px;border-radius:50%;border:3px solid transparent}
+.dots button.on{border-color:var(--text)}
+textarea.field{border-radius:12px;min-height:80px;width:100%;resize:none}
 </style>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react/18.2.0/umd/react.production.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/react-dom/18.2.0/umd/react-dom.production.min.js"></script>
@@ -58,38 +78,63 @@ class Trie {
   search(prefix){let n=this.root;for(const ch of prefix){n=n.c[ch];if(!n)return new Set();}return n.ids;}
 }
 
+/* ===== Penyimpanan lokal ===== */
+const ls={
+  get(k,d){try{const v=localStorage.getItem(k);return v?JSON.parse(v):d;}catch(e){return d;}},
+  set(k,v){try{localStorage.setItem(k,JSON.stringify(v));}catch(e){}}
+};
+
 /* ===== API Laravel ===== */
 const getBase=()=>{try{return localStorage.getItem("server")||"http://10.0.2.2:8000";}catch(e){return "http://10.0.2.2:8000";}};
-const api=(path,opt={})=>fetch(getBase()+"/api"+path,{headers:{"Content-Type":"application/json",Accept:"application/json"},...opt}).then(r=>{if(!r.ok)throw new Error(r.status);return r.json();});
+const api=(path,opt={})=>{
+  const c=new AbortController(); const t=setTimeout(()=>c.abort(),4000);
+  return fetch(getBase()+"/api"+path,{headers:{"Content-Type":"application/json",Accept:"application/json"},signal:c.signal,...opt})
+    .then(r=>{if(!r.ok)throw new Error(r.status);return r.json();})
+    .finally(()=>clearTimeout(t));
+};
 const COLORS=["#2f6feb","#e0603a","#2a9d6f","#8b5cf6"];
 const hm=t=>new Date(t).toLocaleTimeString("id-ID",{hour:"2-digit",minute:"2-digit"});
 
-function App(){
+function Icon({n}){
+  if(n==="chat")return <svg viewBox="0 0 24 24"><path d="M4 5h16v11H9l-5 4z"/></svg>;
+  if(n==="status")return <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="8.5" strokeDasharray="4 3"/><circle cx="12" cy="12" r="3"/></svg>;
+  return <svg viewBox="0 0 24 24"><path d="M4 7h9M19 7h1M4 17h1M11 17h9"/><circle cx="16" cy="7" r="2.5"/><circle cx="8" cy="17" r="2.5"/></svg>;
+}
+
+/* ===== TAB CHAT ===== */
+function ChatTab({online,onOpen}){
   const [rooms,setRooms]=useState([]);
+  const [lrooms,setLrooms]=useState(()=>ls.get("lc_rooms",[{id:"l0",name:"Catatan saya",last:""}]));
+  const [lmsgs,setLmsgs]=useState(()=>ls.get("lc_msgs",{}));
   const [active,setActive]=useState(null);
   const [msgs,setMsgs]=useState([]);
   const [pending,setPending]=useState([]);
   const [text,setText]=useState("");
   const [q,setQ]=useState("");
-  const [err,setErr]=useState(false);
-  const [cfg,setCfg]=useState(false);
-  const [url,setUrl]=useState(getBase());
-  const saveCfg=e=>{e.preventDefault();try{localStorage.setItem("server",url.trim().replace(/\/+$/,""));}catch(x){}setCfg(false);loadRooms();};
+  const [adding,setAdding]=useState(false);
+  const [newName,setNewName]=useState("");
   const queue=useRef(new Queue());
   const busy=useRef(false);
   const end=useRef(null);
 
-  const loadRooms=()=>api("/rooms").then(d=>{setRooms(d);setErr(false);}).catch(()=>setErr(true));
+  useEffect(()=>{ls.set("lc_rooms",lrooms);},[lrooms]);
+  useEffect(()=>{ls.set("lc_msgs",lmsgs);},[lmsgs]);
+  useEffect(()=>{onOpen(!!active);},[active]);
+  useEffect(()=>()=>onOpen(false),[]);
+
+  const loadRooms=()=>api("/rooms").then(setRooms).catch(()=>{});
   const loadMsgs=id=>id&&api(`/rooms/${id}/messages`).then(setMsgs).catch(()=>{});
 
-  useEffect(()=>{loadRooms();},[]);
+  useEffect(()=>{setActive(null);setMsgs([]);if(online)loadRooms();},[online]);
   useEffect(()=>{
+    if(!online)return;
     setMsgs([]); loadMsgs(active);
-    const t=setInterval(()=>{loadMsgs(active);loadRooms();},3000); // polling
+    const t=setInterval(()=>{loadMsgs(active);loadRooms();},3000);
     return ()=>clearInterval(t);
-  },[active]);
+  },[active,online]);
 
-  const all=useMemo(()=>[...msgs,...pending.filter(p=>p.room===active)],[msgs,pending,active]);
+  const roomList=online?rooms:lrooms;
+  const all=useMemo(()=>online?[...msgs,...pending.filter(p=>p.room===active)]:(lmsgs[active]||[]),[online,msgs,pending,active,lmsgs]);
   const trie=useMemo(()=>{
     const t=new Trie();
     all.forEach(m=>m.body.toLowerCase().split(/[^a-z0-9]+/).filter(Boolean).forEach(w=>t.insert(w,m.id)));
@@ -118,48 +163,229 @@ function App(){
     e.preventDefault();
     const body=text.trim(); if(!body||!active)return;
     const id="p"+Date.now();
-    setPending(p=>[...p,{id,room:active,sender:"me",body,created_at:new Date().toISOString(),status:"antri"}]);
-    queue.current.enqueue({id,room:active,body});
-    setText(""); drain();
+    if(online){
+      setPending(p=>[...p,{id,room:active,sender:"me",body,created_at:new Date().toISOString(),status:"antri"}]);
+      queue.current.enqueue({id,room:active,body});
+      drain();
+    }else{
+      const m={id,sender:"me",body,created_at:new Date().toISOString()};
+      setLmsgs(s=>({...s,[active]:[...(s[active]||[]),m]}));
+      setLrooms(rs=>rs.map(r=>r.id===active?{...r,last:body}:r));
+    }
+    setText("");
   };
 
-  const room=rooms.find(r=>r.id===active);
-  return (
-    <div className={"app"+(active?" chat":"")}>
-      <aside className="side">
-        <h1>Pesan <button className="gear" onClick={()=>setCfg(!cfg)} aria-label="Server">⚙</button></h1>
-        {cfg&&<form className="cfg" onSubmit={saveCfg}><input value={url} onChange={e=>setUrl(e.target.value)} placeholder="http://192.168.1.5:8000"/><button>Simpan</button></form>}
-        {err&&<div className="err">Tidak bisa terhubung ke server Laravel. Cek alamat di ⚙.</div>}
-        {rooms.map((r,i)=>(
-          <button key={r.id} className={"room"+(r.id===active?" on":"")} onClick={()=>{setActive(r.id);setQ("");}}>
-            <div className="av" style={{background:COLORS[i%COLORS.length]}}>{r.name[0]}</div>
-            <div><b>{r.name}</b><small>{r.last||"Belum ada pesan"}</small></div>
-          </button>
+  const addRoom=e=>{
+    e.preventDefault();
+    const n=newName.trim(); if(!n)return;
+    setLrooms(rs=>[{id:"l"+Date.now(),name:n,last:""},...rs]);
+    setNewName(""); setAdding(false);
+  };
+
+  const room=roomList.find(r=>r.id===active);
+
+  if(room){
+    return (<>
+      <div className="top">
+        <button className="back" onClick={()=>{setActive(null);setQ("");}} aria-label="Kembali">‹</button>
+        <h1>{room.name}</h1>
+        <input placeholder="Cari kata…" value={q} onChange={e=>setQ(e.target.value)}/>
+      </div>
+      <div className="msgs">
+        {list.length===0&&<div className="empty">Belum ada pesan</div>}
+        {list.map(m=>(
+          <div key={m.id} className={"b"+(m.sender==="me"?" me":"")}>
+            {m.body}
+            <span>{hm(m.created_at)}{m.status?" · "+m.status:""}</span>
+          </div>
         ))}
-      </aside>
-      <section className="main">
-        {room?(<>
-          <div className="head">
-            <button className="back" onClick={()=>setActive(null)} aria-label="Kembali">‹</button>
-            <b>{room.name}</b>
-            <input placeholder="Cari kata…" value={q} onChange={e=>setQ(e.target.value)}/>
+        <div ref={end}/>
+      </div>
+      <form className="form" onSubmit={send}>
+        <input value={text} onChange={e=>setText(e.target.value)} placeholder="Tulis pesan…"/>
+        <button type="submit">Kirim</button>
+      </form>
+    </>);
+  }
+
+  return (<>
+    <div className="top">
+      <h1>Chat</h1>
+      {!online&&<button className="iconbtn" onClick={()=>setAdding(!adding)} aria-label="Chat baru">+</button>}
+    </div>
+    <div className="body">
+      {!online&&<div className="note">Mode lokal: pesan tersimpan di HP ini. Sambungkan server Laravel lewat tab Pengaturan.</div>}
+      {adding&&!online&&(
+        <form className="row" style={{padding:"12px 16px 0"}} onSubmit={addRoom}>
+          <input className="field" autoFocus value={newName} onChange={e=>setNewName(e.target.value)} placeholder="Nama chat baru"/>
+          <button className="btn" type="submit">Buat</button>
+        </form>
+      )}
+      {roomList.length===0&&<div className="empty">Belum ada percakapan</div>}
+      {roomList.map((r,i)=>(
+        <button key={r.id} className="room" onClick={()=>{setActive(r.id);setQ("");}}>
+          <div className="av" style={{background:COLORS[i%COLORS.length]}}>{(r.name||"?")[0].toUpperCase()}</div>
+          <div><b>{r.name}</b><small>{r.last||"Belum ada pesan"}</small></div>
+        </button>
+      ))}
+    </div>
+  </>);
+}
+
+/* ===== TAB STATUS ===== */
+const SCOL=["#2f6feb","#e0603a","#2a9d6f","#8b5cf6","#d4537e"];
+function StatusTab({name}){
+  const [items,setItems]=useState(()=>ls.get("lc_status",[]));
+  const [text,setText]=useState("");
+  const [col,setCol]=useState(SCOL[0]);
+  const [open,setOpen]=useState(false);
+  useEffect(()=>{ls.set("lc_status",items);},[items]);
+  const live=items.filter(s=>Date.now()-s.at<864e5);
+  const post=e=>{
+    e.preventDefault();
+    const t=text.trim(); if(!t)return;
+    setItems([{id:"s"+Date.now(),text:t,col:col,at:Date.now()},...live]);
+    setText(""); setOpen(false);
+  };
+  const del=id=>setItems(items.filter(s=>s.id!==id));
+  return (<>
+    <div className="top"><h1>Status</h1></div>
+    <div className="body">
+      <div className="me-row">
+        <div className="av" style={{background:SCOL[0]}}>{(name||"S")[0].toUpperCase()}</div>
+        <div style={{flex:1}}><b>Status saya</b><div style={{color:"var(--muted)",fontSize:13}}>Hilang otomatis setelah 24 jam</div></div>
+        <button className="btn" onClick={()=>setOpen(!open)}>{open?"Tutup":"Tambah"}</button>
+      </div>
+      {open&&(
+        <form className="sec" onSubmit={post}>
+          <textarea className="field" value={text} onChange={e=>setText(e.target.value)} placeholder="Tulis status…" maxLength={200}/>
+          <div className="dots">
+            {SCOL.map(c=>(<button type="button" key={c} className={c===col?"on":""} style={{background:c}} onClick={()=>setCol(c)} aria-label="Warna"/>))}
           </div>
-          <div className="msgs">
-            {list.length===0&&<div className="empty">Tidak ada pesan</div>}
-            {list.map(m=>(
-              <div key={m.id} className={"b"+(m.sender==="me"?" me":"")}>
-                {m.body}
-                <span>{hm(m.created_at)}{m.status?" · "+m.status:""}</span>
-              </div>
-            ))}
-            <div ref={end}/>
-          </div>
-          <form className="form" onSubmit={send}>
-            <input value={text} onChange={e=>setText(e.target.value)} placeholder="Tulis pesan…"/>
-            <button type="submit">Kirim</button>
-          </form>
-        </>):<div className="empty">Pilih percakapan</div>}
-      </section>
+          <div className="row"><button className="btn" type="submit">Posting</button></div>
+        </form>
+      )}
+      {live.length===0&&!open&&<div className="empty">Belum ada status. Tekan Tambah untuk membuat.</div>}
+      {live.map(s=>(
+        <div key={s.id} className="card" style={{background:s.col}}>
+          <button className="x" onClick={()=>del(s.id)} aria-label="Hapus">×</button>
+          <p>{s.text}</p>
+          <small>{hm(s.at)}</small>
+        </div>
+      ))}
+      <div style={{height:16}}/>
+    </div>
+  </>);
+}
+
+/* ===== TAB PENGATURAN ===== */
+function SettingsTab(p){
+  const [url,setUrl]=useState(getBase());
+  const [res,setRes]=useState("");
+  const [nm,setNm]=useState(p.name);
+  const [wipe,setWipe]=useState(false);
+  const saveName=e=>{e.preventDefault();p.setName(nm.trim()||"Saya");setRes("Nama disimpan");};
+  const saveUrl=e=>{
+    e.preventDefault();
+    try{localStorage.setItem("server",url.trim().replace(/\/+$/,""));}catch(x){}
+    setRes("Alamat disimpan"); p.onServer();
+  };
+  const test=()=>{setRes("Menguji…");p.check().then(ok=>setRes(ok?"Terhubung ke server":"Tidak bisa terhubung"));};
+  const doWipe=()=>{
+    if(!wipe){setWipe(true);return;}
+    ["lc_rooms","lc_msgs","lc_status","lc_name"].forEach(k=>{try{localStorage.removeItem(k);}catch(x){}});
+    location.reload();
+  };
+  const state=p.online?"Terhubung ke server":(p.mode==="lokal"?"Mode lokal (disengaja)":"Server tidak terhubung, memakai mode lokal");
+  return (<>
+    <div className="top"><h1>Pengaturan</h1></div>
+    <div className="body">
+      <form className="me-row" onSubmit={saveName}>
+        <div className="av" style={{background:SCOL[0]}}>{(p.name||"S")[0].toUpperCase()}</div>
+        <input className="field" value={nm} onChange={e=>setNm(e.target.value)} placeholder="Nama kamu"/>
+        <button className="btn" type="submit">Simpan</button>
+      </form>
+
+      <div className="sec">
+        <h2>Server Laravel</h2>
+        <div style={{color:"var(--muted)",fontSize:13}}>{state}</div>
+        <form className="row" onSubmit={saveUrl}>
+          <input className="field" value={url} onChange={e=>setUrl(e.target.value)} placeholder="http://192.168.1.5:8000"/>
+          <button className="btn" type="submit">Simpan</button>
+        </form>
+        <div className="row">
+          <button className="btn ghost" onClick={test} disabled={p.checking}>Tes koneksi</button>
+          <span style={{color:"var(--muted)",fontSize:13}}>{res}</span>
+        </div>
+      </div>
+
+      <div className="sec">
+        <h2>Mode</h2>
+        <div className="seg">
+          <button className={p.mode==="auto"?"on":""} onClick={()=>p.setMode("auto")}>Otomatis</button>
+          <button className={p.mode==="lokal"?"on":""} onClick={()=>p.setMode("lokal")}>Lokal saja</button>
+        </div>
+        <div style={{color:"var(--muted)",fontSize:13,marginTop:8}}>Otomatis memakai server bila terhubung, jika tidak pindah ke lokal.</div>
+      </div>
+
+      <div className="sec">
+        <h2>Tema</h2>
+        <div className="seg">
+          <button className={p.theme==="system"?"on":""} onClick={()=>p.setTheme("system")}>Ikuti sistem</button>
+          <button className={p.theme==="light"?"on":""} onClick={()=>p.setTheme("light")}>Terang</button>
+          <button className={p.theme==="dark"?"on":""} onClick={()=>p.setTheme("dark")}>Gelap</button>
+        </div>
+      </div>
+
+      <div className="sec">
+        <h2>Data</h2>
+        <button className="btn danger" onClick={doWipe}>{wipe?"Yakin? Tekan sekali lagi":"Hapus data lokal"}</button>
+        <div style={{color:"var(--muted)",fontSize:13,marginTop:8}}>Menghapus chat lokal, status, dan nama dari HP ini.</div>
+      </div>
+    </div>
+  </>);
+}
+
+/* ===== APP ===== */
+function App(){
+  const [tab,setTab]=useState("chat");
+  const [inChat,setInChat]=useState(false);
+  const [name,setNameState]=useState(()=>ls.get("lc_name","Saya"));
+  const [mode,setModeState]=useState(()=>ls.get("lc_mode","auto"));
+  const [theme,setThemeState]=useState(()=>ls.get("lc_theme","system"));
+  const [online,setOnline]=useState(false);
+  const [checking,setChecking]=useState(false);
+  const [ver,setVer]=useState(0);
+
+  const setName=v=>{setNameState(v);ls.set("lc_name",v);};
+  const setMode=v=>{setModeState(v);ls.set("lc_mode",v);};
+  const setTheme=v=>setThemeState(v);
+
+  const check=()=>{
+    if(mode==="lokal"){setOnline(false);return Promise.resolve(false);}
+    setChecking(true);
+    return api("/rooms").then(()=>{setOnline(true);return true;}).catch(()=>{setOnline(false);return false;}).finally(()=>setChecking(false));
+  };
+  useEffect(()=>{check();},[mode,ver]);
+  useEffect(()=>{
+    const r=document.documentElement;
+    if(theme==="system")r.removeAttribute("data-theme"); else r.setAttribute("data-theme",theme);
+    ls.set("lc_theme",theme);
+  },[theme]);
+
+  const tabs=[["chat","Chat"],["status","Status"],["setelan","Pengaturan"]];
+  return (
+    <div className="app">
+      {tab==="chat"&&<ChatTab online={online} onOpen={setInChat}/>}
+      {tab==="status"&&<StatusTab name={name}/>}
+      {tab==="setelan"&&<SettingsTab name={name} setName={setName} mode={mode} setMode={setMode} theme={theme} setTheme={setTheme} online={online} checking={checking} check={check} onServer={()=>setVer(v=>v+1)}/>}
+      {!(tab==="chat"&&inChat)&&(
+        <nav className="nav">
+          {tabs.map(([k,l])=>(
+            <button key={k} className={tab===k?"on":""} onClick={()=>setTab(k)}><Icon n={k==="setelan"?"set":k}/>{l}</button>
+          ))}
+        </nav>
+      )}
     </div>
   );
 }
